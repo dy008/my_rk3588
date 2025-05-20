@@ -1,0 +1,100 @@
+rk3588-xtcut2 IO定义
+----------------GPIO0-----------------------
+0-0
+-1
+-3
+0-5 : SPI2_CLK_M2(rk8601)
+-6 : SPI2_MOSI_M2
+-7
+-8 : WIFI AW-XM458 PDn_active_low(0_B0)
+-9 : SPI2_CS0_M2
+-10 : usb3.0接口5v控制(u4198)LOW
+-11 : SPI2_MISO_M2
+-12
+-13 : UART2_TX_M0（debug)
+-14 : UART2_RX_M0
+-15 : I2C2_SCL_M0(rk8602-42)npu power
+-16 : I2C2_SDA_M0
+
+0-22 : HDMI0 enable
+-23 : I2C6_SDA_M0 (0x32)
+-24 : I2C6_SCL_M0
+-25 : I2C0_SCL_M2(rk8602,3-42-43)cpu power
+-26 : I2C0_SDA_M2
+-27 : green led :GPIO_ACTIVE_LOW
+-28 : HDMI_TX0_SCL_M1
+-29 : HDMI_TX0_SDA_M1
+-30 : PMIC_SLEEP6
+----------------GPIO1----------------------
+1-0 : UART6_RX_M1  bluetooth  -GOC-Q82008W 
+-1 : UART6_TX_M1 
+-2 : UART6_RTS_M1
+-3 : UART6_CTS_M1
+
+1-5: HDMI_TX0_HPD_M0
+
+1-16 : I2C3_SDA_M0    (0x11 es8388)
+-17 : I2C3_SCL_M0
+-18 : I2S0_MCLK
+-19 : I2S0_SCLK
+-20 : U4191 Enable  PCIE J77 POWER active_high
+-21 : I2S0_LRCK
+-22 : U4185 Enable  PCIE J76 POWER active_high
+-23 : I2S0_SDO0
+-24 : bluetooth Reset -GOC-Q82008W
+
+1-28 : I2S0_SDI0
+
+----------------GPIO2----------------------
+2-0: EMMC_CMD
+-1: EMMC_CLKOUT
+-2: EMMC_DATA_STROBE
+-3: EMMC_RSTN
+
+2-6~11 : GMAC0
+2-14~19: GMAC0
+2-20 : 控制yt8531千兆网络phf电源HIGH
+
+2-24: EMMC_D0
+-25: EMMC_D1
+-26: EMMC_D2
+-27: EMMC_D3
+-28: EMMC_D4
+-29: EMMC_D5
+-30: EMMC_D6
+-31: EMMC_D7
+-------------------GPIO3-------------------
+3-7 : GMAC1_RXD0
+-8 : GMAC1_RXD1
+-9 : GMAC1_RXDV
+-10: GMAC1_TXER
+-11 : GMAC1_TXD0
+-12 : GMAC1_TXD1
+-13 : GMAC1_TXEN
+-14 : GMAC1_MCLKINOUT
+-15 : IP179N RESET ACTIVE_LOW
+
+3-17 : WIFI PCIe DISABLEn(active low) (3-C1) --- PCIE_DISABLEn
+-18 : GMAC1_MDC
+-19 : GMAC1_MDIO
+
+RK3588                              AW-XM458
+3-23 : PCIE20X1_2_CLKREQN_M0 --- PCIE_CLKREQn 
+-24 : PCIE20X1_2_WAKEN_M0 --- PCIE_WAKEn 
+-25 : PCIE20X1_2_PERSTN_M0 --- PCIE_PERSTn(3-D1)
+
+3-28: red led : GPIO_ACTIVE_LOW
+-29 : bluetooth Power -GOC-Q82008W -ACTIVE_HIGH
+
+---------------GPIO4--------------------
+4-17 : HDMI_TX0_CEC_M0
+-18: GMAC0_RXDV
+-19: GMAC0_MCLKINOUT
+-20 : yt8531 GMAC0_MDC
+-21 : yt8531 GMAC0_MDIO
+
+4-27 : yt8531 reset
+
+---------------------------------------
+dtc -I dtb -O dts -o xtcut2.dts rk3588-xtcut2.dtb
+dtc -I dts -O dtb -o /boot/dtb/rockchip/rk3588-xtcut2.dtb ./xtcut2.dts
