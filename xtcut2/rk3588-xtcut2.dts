@@ -2,7 +2,7 @@
 /*
  * Copyright (c) 2021 Rockchip Electronics Co., Ltd.
  * Copyright (c) 2023 Thomas McKahan
- *
+ * Modify by dy008
  */
 
 /dts-v1/;
@@ -24,10 +24,6 @@
 / {
 	model = "XTCUT-T2";
 	compatible = "xtcu,t2", "rockchip,rk3588";
-
-	chosen {
-		bootargs = "earlycon=uart8250,mmio32,0xfeb50000 console=ttyFIQ0 coherent_pool=1m irqchip.gicv3_pseudo_nmi=0";
-	};
 
 	aliases {
 		mmc0 = &sdhci;
@@ -117,6 +113,7 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&yt8531_pwr>;
 		regulator-name = "vcc_yt8531";
+		regulator-boot-on;
         enable-active-high;
         regulator-always-on;
 		regulator-min-microvolt = <3300000>;
@@ -133,23 +130,11 @@
 		pinctrl-0 = <&pcie_wifi_enable_h>;
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
 		enable-active-high;
 		regulator-always-on;
 		vin-supply = <&vcc5v0_sys>;		
 	};
-
-	// AW-XM458 of NXP 88W9098 PCIE_PERSTn
-	/* pcie_wifi_perstn: pcie-wifi-perstn-regulator {
-		compatible = "regulator-fixed";
-		regulator-name = "PCIE_WLAN_PERSTn;";
-		gpios = <&gpio0 RK_PB0 GPIO_ACTIVE_LOW>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&pcie_wifi_perstn_h>;
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		regulator-always-on;
-		vin-supply = <&vcc5v0_sys>;		
-	}; */
 
 	// AW-XM458 of NXP 88W9098 PCIE_PDn
 	pcie_wifi_pdn: pcie-wifi-pdn-regulator {
@@ -160,8 +145,9 @@
 		pinctrl-0 = <&pcie_wifi_pdn_h>;
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
-		startup-delay-us = <200000>;
-		//regulator-always-on;
+		startup-delay-us = <1000000>;
+		regulator-boot-on;
+		regulator-always-on;
 		vin-supply = <&vcc5v0_sys>;		
 	};
 	
@@ -174,6 +160,31 @@
 		pinctrl-0 = <&bluetooth_power_en_h>;
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
+		enable-active-high;
+		regulator-always-on;
+		vin-supply = <&vcc5v0_sys>;		
+	};
+
+	pciej76_power_en: pciej76-power-en-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "PCIEJ76_POWER_EN";
+		gpios = <&gpio1 RK_PC6 GPIO_ACTIVE_HIGH>;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
+		enable-active-high;
+		regulator-always-on;
+		vin-supply = <&vcc5v0_sys>;		
+	};
+
+	pciej77_power_en: pciej77-power-en-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "PCIEJ77_POWER_EN";
+		gpios = <&gpio1 RK_PC4 GPIO_ACTIVE_HIGH>;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
 		enable-active-high;
 		regulator-always-on;
 		vin-supply = <&vcc5v0_sys>;		
@@ -185,6 +196,7 @@
 		pinctrl-0 = <&usb2_sel_h>;
 		regulator-name = "USB2_SEL";
 		gpios = <&gpio4 RK_PD4 GPIO_ACTIVE_LOW>;
+		regulator-boot-on;
 		regulator-always-on;
 	};
 
@@ -194,7 +206,7 @@
 		pinctrl-names = "default", "rts_gpio";
 		pinctrl-0 = <&uart6m1_rtsn>, <&bt_reset_gpio>;
 		pinctrl-1 = <&uart6_gpios>;
-		BT,reset_gpio = <&gpio1 RK_PD0 GPIO_ACTIVE_LOW>;
+		BT,reset_gpio = <&gpio1 RK_PD0 GPIO_ACTIVE_HIGH>;
 		status = "okay";
 	};	// ok
 
@@ -239,7 +251,7 @@
 		compatible = "pwm-fan";
 		#cooling-cells = <2>;
 		cooling-levels = <72 94 117 139 162 184 207 229 255>;
-		//pwms = <&pwm1 0 10000 0>;
+		pwms = <&pwm0 0 10000 0>;
 	};
 };
 
@@ -377,7 +389,6 @@
 	//rx_delay = <0x0>;
 	
 	phy-handle = <&rgmii_phy0>;
-	linux,network-index = <0>;  // 强制为eth0
 	status = "okay";
 };
 
@@ -405,8 +416,6 @@
 	tx_delay = <0x45>;
 	rx_delay = <0x4f>;
 
-	//phy-handle = <&rgmii_phy1>;
-	linux,network-index = <1>;  // 强制为eth1
 	status = "disabled";
 
     fixed-link {
@@ -684,26 +693,6 @@
 	status = "okay";
 };
 
-&hdmi0_in_vp1 {
-	status = "disabled";
-};
-
-&hdmi0_in_vp2 {
-	status = "disabled";
-};
-
-&i2s5_8ch {
-	status = "disabled";
-};
-
-&i2s6_8ch {
-	status = "disabled";
-};
-
-&i2s7_8ch {
-	status = "disabled";
-};
-
 &vop {
 	vop-supply = <&vdd_log_s0>;
 	support-multi-area;
@@ -739,10 +728,6 @@
     rockchip,primary-plane = <ROCKCHIP_VOP2_ESMART3>;
 };
 
-&i2c1 {
-    status = "disabled";
-};
-
 &i2c3 {
     status = "okay";
 	pinctrl-0 = <&i2c3m0_xfer>;
@@ -761,15 +746,6 @@
 	};
 };
 
-
-&i2c4 {
-    status = "disabled";
-};
-
-&i2c5 {
-	status = "disabled";
-};
-
 &i2c6 {
 	status = "okay";
 	pinctrl-0 = <&i2c6m0_xfer>;
@@ -781,15 +757,6 @@
 		//rtc_alarm_irq_pin = <&gpio0 RK_PC4 IRQ_TYPE_LEVEL_LOW>;
 	};
 };
-
-&i2c7 {
-	status = "disabled";
-};
-
-&i2c8 {
-	status = "disabled";
-};
-
 
 &i2s0_8ch {
 	status = "okay";
@@ -859,12 +826,20 @@
 	};
 };
 
-&pwm1 {
-	status = "disabled";
+// GPIO1_D2
+&pwm0 {
+	pinctrl-0 = <&pwm0m1_pins>;
+	status = "okay";
 };
 
-&uart4 {
-	status = "disabled";
+&uart0 {
+	status = "okay";
+	pinctrl-0 = <&uart0m2_xfer>;
+};
+
+&uart3 {
+	status = "okay";
+	pinctrl-0 = <&uart3m2_xfer>;
 };
 
 &uart6 {	
@@ -873,19 +848,17 @@
 	pinctrl-0 = <&uart6m1_xfer>;
 };
 
-&uart7 {
-	status = "disabled";
+&can1 {
+	pinctrl-0 = <&can1m1_pins>;
+	status = "okay";
 };
 
-&uart9 {
-	status = "disabled";
+&can2 {
+	pinctrl-0 = <&can2m0_pins>;
+	status = "okay";
 };
-
 
 // USB3.0 OTG1(DWC3/xHCI) TYPE-C0
-//配置dr_mode = "peripheral" 通知DWC3驱动初始化为Device only mode
-//配置"phys = <&u2phy0_otg>" 即不引用USBDP PHY
-//配置maximum-speed = "high-speed" 通知DWC3驱动将USB限制为USB2.0 only
 &usbdrd3_0{
 	status = "okay";
 };
@@ -893,11 +866,6 @@
 &usbdrd_dwc3_0 {	
 	status = "okay";
 	dr_mode = "host";
-	//extcon = <&u2phy0>;
-	/* dr_mode = "peripheral";
-	phys = <&u2phy0_otg>;
-	phy-names = "usb2-phy";
-	maximum-speed = "high-speed"; */
 };
 
 
@@ -928,7 +896,6 @@
 	status = "okay";
 };
 
-//配置为只支持USB2.0
 &usbdrd_dwc3_1 {
 	status = "okay";
 	dr_mode = "host";
@@ -958,7 +925,7 @@
 	status = "okay";
 };
 
-// #配置USB3.1 HOST2 Controller
+// # USB3.1 HOST2 Controller
 &usbhost3_0 {
     status = "disabled";
 };
@@ -968,18 +935,19 @@
     status = "disabled";
 };
 
-//使能USB3.1/SATA/PCIe Combo PHY
+//USB3.1/SATA/PCIe Combo PHY0
 &combphy0_ps {
 	status = "okay";	
 };
 
+//USB3.1/SATA/PCIe Combo PHY1
 &combphy1_ps {
-	status = "disabled";	
+	status = "okay";
 };
 
 // combUSB3.1
 &combphy2_psu {
-	status = "disabled";
+	status = "okay";
 };
 
 // #USB2.0 HOST0/1 Controller
@@ -999,7 +967,7 @@
     status = "disabled";
 };
 
-// #USB2.0 PHY2/3配置"phy-supply"属性，用于控制VBUS输出5V
+// #USB2.0 PHY2/3
 &u2phy2 {
 	status = "disabled";
 };
@@ -1018,29 +986,26 @@
 };
 
 &pcie2x1l0 {
-	/* phys = <&combphy1_ps PHY_TYPE_PCIE>;
-    reset-gpios = <&gpio0 RK_PB0 GPIO_ACTIVE_HIGH>;
-	rockchip,perst-inactive-ms = <500>;
-	//supports-clkreq;
-	vpcie3v3-supply = <&pcie_wifi_enable>;
-    status = "okay"; */
-	status = "disabled";
+	phys = <&combphy1_ps PHY_TYPE_PCIE>;
+    reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_LOW>;
+	vpcie3v3-supply = <&pcie_wifi_pdn>;
+    status = "okay";
 };
 
-&pcie2x1l1 {
-    /* phys = <&combphy2_psu PHY_TYPE_PCIE>;
+/* &pcie2x1l1 {
+    phys = <&combphy2_psu PHY_TYPE_PCIE>;
     reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_LOW>;
-    status = "okay"; */
-	status = "disabled";
-};
+	vpcie3v3-supply = <&pcie_wifi_pdn>;
+    status = "okay";
+}; */
 
-&pcie2x1l2 {	// wifi
+/* &pcie2x1l2 {	// wifi
     reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_LOW>;
-	rockchip,skip-scan-in-resume;
+	//rockchip,skip-scan-in-resume;
 	//supports-clkreq;
 	vpcie3v3-supply = <&pcie_wifi_pdn>;
     status = "okay";	
-};
+}; */
 
 &pinctrl {
 	gpio-leds {
@@ -1081,7 +1046,7 @@
 			};
 
 			pcie_wifi_pdn_h: pcie-wifi-pdn-h {
-				rockchip,pins = <0 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
+				rockchip,pins = <0 RK_PB0 RK_FUNC_GPIO &pcfg_pull_up>;
 			};
 
 			bluetooth_power_en_h: bluetooth-power-en-h {
