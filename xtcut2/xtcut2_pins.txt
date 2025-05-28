@@ -37,9 +37,9 @@ rk3588-xtcut2 IO定义
 -17 : I2C3_SCL_M0
 -18 : I2S0_MCLK
 -19 : I2S0_SCLK
--20 : U4191 Enable  PCIE J77 POWER active_high
+-20 : U4191 Enable  PCIE J77 POWER active_high(1-C4)
 -21 : I2S0_LRCK
--22 : U4185 Enable  PCIE J76 POWER active_high
+-22 : U4185 Enable  PCIE J76 POWER active_high(1-C6)
 -23 : I2S0_SDO0
 -24 : bluetooth Reset -GOC-Q82008W
 
@@ -74,19 +74,29 @@ rk3588-xtcut2 IO定义
 -14 : GMAC1_MCLKINOUT
 -15 : IP179N RESET ACTIVE_LOW
 
-3-17 : WIFI PCIe DISABLEn(active low) (3-C1) --- PCIE_DISABLEn
+3-17 : WIFI PCIe DISABLEn(active low) (3-C1) --- PCIE_DISABLEn( LOW 禁止Wi-Fi功能）
 -18 : GMAC1_MDC
 -19 : GMAC1_MDIO
+-20 : CAN2_RX_M0(3-C4) U17 TD301MCAN
+-21 : CAN2_TX_M0(3-C5)
 
 RK3588                              AW-XM458
-3-23 : PCIE20X1_2_CLKREQN_M0 --- PCIE_CLKREQn 
--24 : PCIE20X1_2_WAKEN_M0 --- PCIE_WAKEn 
+3-23 : PCIE20X1_2_CLKREQN_M0 --- PCIE_CLKREQn (3-C7)
+-24 : PCIE20X1_2_WAKEN_M0 --- PCIE_WAKEn (3-D0)
 -25 : PCIE20X1_2_PERSTN_M0 --- PCIE_PERSTn(3-D1)
 
 3-28: red led : GPIO_ACTIVE_LOW
 -29 : bluetooth Power -GOC-Q82008W -ACTIVE_HIGH
 
 ---------------GPIO4--------------------
+4-3 : UART0_TX_M2 (4-A3) U58 TD301M485 
+ -4 : UART0_RX_M2 (4-A4)
+ -5 : UART3_TX_M2 (4-A5) U59 TD301M485
+ -6 : UART3_RX_M2 (4-A6)
+
+4-10 : CAN1_RX_M1(4-B2) U18 TD301MCAN
+  -11 : CAN1_TX_M1(4-B3)
+
 4-17 : HDMI_TX0_CEC_M0
 -18: GMAC0_RXDV
 -19: GMAC0_MCLKINOUT
@@ -94,7 +104,5 @@ RK3588                              AW-XM458
 -21 : yt8531 GMAC0_MDIO
 
 4-27 : yt8531 reset
-
+ -28 : U4200 CH9442Q  SEL for USB2.0 PORT SELECT
 ---------------------------------------
-dtc -I dtb -O dts -o xtcut2.dts rk3588-xtcut2.dtb
-dtc -I dts -O dtb -o /boot/dtb/rockchip/rk3588-xtcut2.dtb ./xtcut2.dts
