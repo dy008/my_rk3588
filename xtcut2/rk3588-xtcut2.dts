@@ -140,12 +140,12 @@
 	pcie_wifi_pdn: pcie-wifi-pdn-regulator {
 		compatible = "regulator-fixed";
 		regulator-name = "PCIE_WLAN_PDN";
-		gpios = <&gpio0 RK_PB0 GPIO_ACTIVE_LOW>;
+		gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_HIGH>;
 		pinctrl-names = "default";
-		pinctrl-0 = <&pcie_wifi_pdn_h>;
+		pinctrl-0 = <&pcie_wifi_reset_h>;
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
-		startup-delay-us = <1000000>;
+		enable-active-high;
 		regulator-boot-on;
 		regulator-always-on;
 		vin-supply = <&vcc5v0_sys>;		
@@ -200,7 +200,17 @@
 		regulator-always-on;
 	};
 
-	wireless_bluetooth: wireless-bluetooth {
+	qccblue_reset: qccblue-reset {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&qccblue_reset_h>;
+		regulator-name = "QCC BLUETOOTH";
+		gpios = <&gpio1 RK_PD0 GPIO_ACTIVE_LOW>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+
+	/* wireless_bluetooth: wireless-bluetooth {
 		compatible = "bluetooth-platdata";
 		uart_rts_gpios = <&gpio1 RK_PA2 GPIO_ACTIVE_LOW>;
 		pinctrl-names = "default", "rts_gpio";
@@ -208,7 +218,7 @@
 		pinctrl-1 = <&uart6_gpios>;
 		BT,reset_gpio = <&gpio1 RK_PD0 GPIO_ACTIVE_HIGH>;
 		status = "okay";
-	};	// ok
+	};	// ok */
 
 	wireless_wlan: wireless-wlan {
 		compatible = "wlan-platdata";
@@ -987,7 +997,7 @@
 
 &pcie2x1l0 {
 	phys = <&combphy1_ps PHY_TYPE_PCIE>;
-    reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_LOW>;
+    reset-gpios = <&gpio0 RK_PD1 GPIO_ACTIVE_HIGH>;
 	vpcie3v3-supply = <&pcie_wifi_pdn>;
     status = "okay";
 };
@@ -1049,8 +1059,16 @@
 				rockchip,pins = <0 RK_PB0 RK_FUNC_GPIO &pcfg_pull_up>;
 			};
 
+			pcie_wifi_reset_h: pcie-wifi-reset-h {
+				rockchip,pins = <3 RK_PD1 RK_FUNC_GPIO &pcfg_pull_up>;
+			};
+
 			bluetooth_power_en_h: bluetooth-power-en-h {
 				rockchip,pins = <3 RK_PD5 RK_FUNC_GPIO &pcfg_pull_none>;
+			};
+
+			qccblue_reset_h: qccblue-reset-h {
+				rockchip,pins = <1 RK_PD0 RK_FUNC_GPIO &pcfg_pull_none>;
 			};
 
 			usb2_sel_h: usb2-sel-h {
